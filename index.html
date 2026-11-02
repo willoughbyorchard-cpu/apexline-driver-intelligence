@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>APEXLINE — Driver intelligence</title>
+<style>
+:root{
+ --site-primary:#c7ff3d;--site-secondary:#20252b;--site-background:#0b0e11;
+ --site-on-primary:#10140a;--site-on-secondary:#f4f6f8;--site-on-background:#f4f6f8;
+ --site-font-body:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+ --site-font-heading:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+ --site-heading-scale:1;--site-spacing-scale:1;--site-radius-scale:1;--site-decoration-opacity:1;
+}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--site-background);color:var(--site-on-background);font-family:var(--site-font-body);letter-spacing:-.01em}
+button,input,select{font:inherit}button{cursor:pointer}
+#app{min-height:100vh;background:var(--site-background);color:var(--site-on-background);overflow:hidden}
+a{color:inherit;text-decoration:none}.muted{color:#929ba5}.lime{color:var(--site-primary)}
+.topbar{height:76px;display:flex;align-items:center;justify-content:space-between;padding:0 5.5vw;border-bottom:1px solid #242a30;position:sticky;top:0;background:rgba(11,14,17,.94);backdrop-filter:blur(14px);z-index:20}
+.brand{font-weight:950;letter-spacing:.12em;font-size:18px}.brand span{color:var(--site-primary)}
+.nav{display:flex;gap:28px;color:#aeb6bf;font-size:13px}.nav a:hover{color:white}
+.nav-actions{display:flex;align-items:center;gap:18px}.btn{border:0;border-radius:5px;padding:12px 18px;font-size:12px;font-weight:850;letter-spacing:.07em;text-transform:uppercase;background:var(--site-primary);color:#10140a;transition:.2s}.btn:hover{transform:translateY(-2px);filter:brightness(1.07)}.btn.ghost{background:transparent;border:1px solid #414950;color:#f5f7f8}.btn.small{padding:10px 13px}.menu{display:none;background:none;border:0;color:white;font-size:23px}
+.hero{padding:100px 8vw 86px;min-height:640px;display:grid;grid-template-columns:1.02fr .98fr;gap:50px;align-items:center;position:relative}
+.eyebrow{font-size:10px;font-weight:900;letter-spacing:.2em;color:var(--site-primary);text-transform:uppercase;display:flex;align-items:center;gap:10px}.eyebrow:before{content:"";width:24px;height:1px;background:var(--site-primary)}
+h1,h2,h3,p{margin-top:0}h1{font-size:clamp(48px,6vw,82px);line-height:.94;letter-spacing:-.075em;margin:22px 0 24px;font-weight:950}h1 em{font-style:normal;color:var(--site-primary)}.hero-copy{font-size:16px;line-height:1.75;color:#a8b1ba;max-width:500px}.hero-actions{display:flex;gap:12px;margin-top:32px;flex-wrap:wrap}.proof{display:flex;gap:26px;margin-top:50px}.proof strong{font-size:20px;display:block}.proof span{font-size:10px;color:#87919b;letter-spacing:.08em;text-transform:uppercase}
+.hero-visual{position:relative;min-height:450px;display:flex;align-items:center;justify-content:center}.visual-frame{width:100%;max-width:610px;border:1px solid #394149;background:linear-gradient(145deg,#1b2229,#0d1115 70%);padding:17px;border-radius:10px;box-shadow:0 35px 100px #0009;transform:perspective(1000px) rotateY(-7deg) rotateX(2deg)}
+.window-head{display:flex;justify-content:space-between;align-items:center;padding:3px 4px 15px;font-size:10px;color:#9ba5ae;letter-spacing:.13em;text-transform:uppercase}.live-dot{color:var(--site-primary)}.telemetry{background:#10161b;border:1px solid #293139;border-radius:5px;padding:18px}.telemetry-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}.telemetry-head strong{font-size:13px}.tag{font-size:9px;padding:5px 8px;border:1px solid #3c4851;color:var(--site-primary);border-radius:3px;letter-spacing:.12em}.track{width:100%;height:180px;background:#131b20;border-radius:4px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}.track svg{width:85%;height:85%}.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}.metric{background:#151c22;padding:12px;border-radius:4px}.metric small{display:block;color:#87939e;font-size:9px;text-transform:uppercase;letter-spacing:.1em}.metric b{font-size:19px;display:block;margin-top:5px}.coach-note{margin-top:10px;background:#202b1b;border:1px solid #526b2b;padding:13px;border-radius:4px;font-size:11px;color:#d9e8c5;line-height:1.5}.coach-note b{color:var(--site-primary)}
+.section{padding:90px 8vw}.section.alt{background:#11161b;border-top:1px solid #222a31;border-bottom:1px solid #222a31}.section-head{max-width:680px;margin-bottom:40px}.section h2{font-size:clamp(34px,4vw,52px);line-height:1.02;letter-spacing:-.06em;margin:14px 0}.section-intro{color:#9da7b0;line-height:1.7;font-size:14px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}.feature{border:1px solid #2b333b;background:#12181e;padding:25px;border-radius:7px;min-height:220px}.feature .num{font-size:10px;color:var(--site-primary);letter-spacing:.15em}.feature h3{font-size:19px;margin:30px 0 10px}.feature p{color:#9ba5ae;font-size:13px;line-height:1.65;margin:0}
+.product-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.product-card{background:#12181e;border:1px solid #2c353e;border-radius:8px;padding:28px;min-height:300px}.product-card h3{font-size:24px;margin:18px 0 10px}.product-card p{color:#9da7b0;font-size:13px;line-height:1.7;max-width:460px}.product-card .icon{width:40px;height:40px;border:1px solid #46543b;color:var(--site-primary);display:grid;place-items:center;border-radius:6px;font-size:18px}
+.demo{display:grid;grid-template-columns:.8fr 1.2fr;gap:22px}.panel{background:#10161b;border:1px solid #2c353d;border-radius:8px;padding:22px}.panel h3{font-size:16px}.field{display:block;width:100%;padding:12px;background:#0b1014;border:1px solid #35404a;border-radius:4px;color:white;margin:9px 0 16px;font-size:12px}.upload{border:1px dashed #56636d;padding:24px;text-align:center;border-radius:6px;color:#aab3bb;font-size:12px}.upload input{display:block;margin:15px auto 0;max-width:100%;font-size:11px}.result{display:none;margin-top:16px;padding:15px;background:#192319;border:1px solid #4e6930;border-radius:5px;font-size:12px;line-height:1.65}.result.show{display:block}.chart{height:190px;width:100%;background:#0c1216;border-radius:5px;margin-top:15px}.chart svg{width:100%;height:100%}
+.pricing{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}.price-card{border:1px solid #303941;background:#12181e;border-radius:8px;padding:25px;position:relative}.price-card.popular{border-color:var(--site-primary);box-shadow:0 0 0 1px #c7ff3d33}.price-card h3{font-size:17px}.price{font-size:36px;font-weight:900;letter-spacing:-.06em;margin:18px 0 4px}.price small{font-size:12px;color:#9ba5ae;font-weight:500;letter-spacing:0}.price-card p{font-size:12px;color:#a1abb4;line-height:1.6;min-height:40px}.price-card ul{padding:0;list-style:none;margin:22px 0}.price-card li{font-size:12px;color:#c5cbd1;padding:8px 0;border-top:1px solid #273039}.price-card li:before{content:"✓";color:var(--site-primary);margin-right:9px}
+.faq{max-width:850px}.faq details{border-bottom:1px solid #303941;padding:18px 0}.faq summary{cursor:pointer;font-size:14px;font-weight:750}.faq details p{color:#9da7b0;font-size:13px;line-height:1.7;margin:12px 0 0}
+.cta{padding:70px 8vw;background:var(--site-primary);color:#11160b;display:flex;justify-content:space-between;align-items:center;gap:30px}.cta h2{font-size:clamp(30px,4vw,48px);letter-spacing:-.06em;margin:0}.cta p{font-size:13px;max-width:450px;line-height:1.6;margin:10px 0 0;color:#303a20}.cta .btn{background:#11160b;color:#d8ff78}
+footer{padding:35px 8vw;display:flex;justify-content:space-between;gap:20px;color:#7f8992;font-size:11px;border-top:1px solid #252d34}
+.app-view{display:none;min-height:calc(100vh - 76px);padding:45px 6vw 80px;background:#0d1115}.app-view.active{display:block}.landing.hidden{display:none}
+.dash-top{display:flex;justify-content:space-between;align-items:end;gap:20px;margin-bottom:28px}.dash-top h2{font-size:38px;letter-spacing:-.06em;margin:8px 0}.dash-grid{display:grid;grid-template-columns:1.3fr .7fr;gap:18px}.dash-card{background:#141b21;border:1px solid #303a43;border-radius:8px;padding:22px}.dash-card h3{font-size:14px}.dash-statrow{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.stat{background:#0e1419;padding:17px;border-radius:5px}.stat span{font-size:9px;color:#8e9aa4;text-transform:uppercase;letter-spacing:.12em}.stat strong{display:block;font-size:25px;margin-top:8px}.session{display:flex;justify-content:space-between;border-top:1px solid #2b353d;padding:15px 0;font-size:12px;color:#c5ccd2}.session span{color:#929da6}
+.toast{position:fixed;bottom:22px;right:22px;background:#d5ff74;color:#10140a;padding:13px 18px;border-radius:5px;font-size:12px;font-weight:800;z-index:50;display:none;box-shadow:0 8px 30px #0008}.toast.show{display:block}
+@media(max-width:850px){.nav{display:none}.menu{display:block}.hero{grid-template-columns:1fr;padding-top:70px}.hero-visual{min-height:340px}.grid3,.pricing{grid-template-columns:1fr}.product-grid,.demo,.dash-grid{grid-template-columns:1fr}.cta{display:block}.cta .btn{margin-top:20px}.proof{gap:16px}.topbar{padding:0 5vw}}
+@media(max-width:520px){.hero,.section{padding-left:6vw;padding-right:6vw}.hero{padding-top:55px}.proof{flex-wrap:wrap}.metrics{grid-template-columns:1fr 1fr}.metrics .metric:last-child{display:none}.cta{padding:50px 6vw}footer{display:block;line-height:2}.nav-actions .ghost{display:none}}
+.sim-connect-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.sim-connect-card{background:#12181e;border:1px solid #303a43;border-radius:7px;padding:18px}.sim-connect-card h3{font-size:15px;margin:12px 0 6px}.sim-connect-card p{font-size:11px;color:#9da7b0;line-height:1.6;min-height:52px}.connection-state{display:flex;align-items:center;gap:7px;font-size:10px;color:#ffbd70;margin:14px 0}.connection-state:before{content:"";width:7px;height:7px;border-radius:50%;background:#ffbd70}.engineer-console{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:18px}.radio-feed{background:#0b1014;border:1px solid #303a43;border-radius:6px;padding:18px;min-height:190px}.radio-line{border-bottom:1px solid #273039;padding:12px 0;font-size:12px;line-height:1.6;color:#c6ced5}.radio-line:last-child{border:0}.radio-line b{color:var(--site-primary)}.capability-note{margin-top:16px;padding:14px;border:1px solid #55452d;background:#211b13;color:#d8c5a7;font-size:11px;line-height:1.65;border-radius:5px}
+@media(max-width:850px){.sim-connect-grid{grid-template-columns:1fr 1fr}.engineer-console{grid-template-columns:1fr}}
+@media(max-width:520px){.sim-connect-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div id="app">
+<header class="topbar">
+ <a class="brand" href="#" onclick="showLanding()">APEX<span>LINE</span><small style="font-size:8px;color:#7e8992;letter-spacing:.2em;margin-left:8px">DRIVER INTELLIGENCE</small></a>
+ <nav class="nav"><a href="#platform">Platform</a><a href="#sim-live">Live sim coach</a><a href="#analysis">Real-world review</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a></nav>
+ <div class="nav-actions"><button class="btn ghost small" onclick="showDashboard()">Open app</button><button class="btn small" onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth'})">Get started</button><button class="menu" onclick="showDashboard()">☰</button></div>
+</header>
+<main class="landing" id="landing">
+<section class="hero">
+ <div>
+  <div class="eyebrow">The next generation of driver development</div>
+  <h1>FIND THE<br>TIME YOU'RE<br><em>LEAVING OUT.</em></h1>
+  <p class="hero-copy">One intelligent racing coach for the simulator and the real circuit. Understand your data, expose the habits costing you time, and turn every session into measurable progress.</p>
+  <div class="hero-actions"><button class="btn" onclick="showDashboard()">Explore the platform ↗</button><button class="btn ghost" onclick="document.getElementById('analysis').scrollIntoView({behavior:'smooth'})">See lap analysis</button></div>
+  <div class="proof"><div><strong>SIM + REAL</strong><span>One driver profile</span></div><div><strong>DATA-LED</strong><span>Not guesswork</span></div><div><strong>AI COACH</strong><span>Built around you</span></div></div>
+ </div>
+ <div class="hero-visual">
+  <div class="visual-frame">
+   <div class="window-head"><span>APEXLINE / SESSION 024</span><span class="live-dot">● DEMO DATA</span></div>
+   <div class="telemetry">
+    <div class="telemetry-head"><strong>Silverstone GP · GT3</strong><span class="tag">LAP COMPARISON</span></div>
+    <div class="track"><svg viewBox="0 0 500 220" fill="none"><path d="M80 145 C45 100 85 50 145 65 L205 80 C250 90 245 25 310 30 C375 35 390 80 350 110 C315 138 360 175 420 150 C465 130 470 70 420 55" stroke="#c7ff3d" stroke-width="4" stroke-linecap="round"/><path d="M80 145 C45 100 85 50 145 65 L205 80 C250 90 245 25 310 30 C375 35 390 80 350 110 C315 138 360 175 420 150 C465 130 470 70 420 55" stroke="#74818b" stroke-width="14" stroke-dasharray="2 11" opacity=".45" stroke-linecap="round"/><circle cx="205" cy="80" r="7" fill="#ff9e3d"/><circle cx="350" cy="110" r="7" fill="#ff9e3d"/><text x="218" y="67" fill="#ffb16b" font-size="10">T6</text><text x="360" y="99" fill="#ffb16b" font-size="10">T9</text></svg></div>
+    <div class="metrics"><div class="metric"><small>Best lap</small><b>1:58.426</b></div><div class="metric"><small>Potential</small><b class="lime">1:57.810</b></div><div class="metric"><small>Time lost</small><b>+0.616s</b></div></div>
+    <div class="coach-note"><b>COACH INSIGHT · T6</b><br>You're releasing the brake too early and coasting before turn-in. Carry a little more trail brake to rotate the car and build throttle earlier.</div>
+   </div>
+  </div>
+ </div>
+</section>
+<section class="section alt" id="platform">
+ <div class="section-head"><div class="eyebrow">One platform. Every circuit.</div><h2>YOUR COACH DOESN'T<br>END AT THE SIM.</h2><p class="section-intro">Develop your technique in sim racing, transfer those skills to real-world driving, and keep your progress connected in one driver profile.</p></div>
+ <div class="grid3">
+  <article class="feature"><div class="num">01 / SIM RACING</div><h3>Understand every input.</h3><p>Compare braking, throttle, steering, speed and racing line. Find the corners where you're losing time and understand why.</p></article>
+  <article class="feature"><div class="num">02 / REAL MOTORSPORT</div><h3>Learn from your footage.</h3><p>Upload onboard video and, where available, GPS or vehicle data. Review corner phases, visible lines and repeatable habits.</p></article>
+  <article class="feature"><div class="num">03 / LIVE COACHING</div><h3>Feedback while you drive.</h3><p>A future desktop race engineer can monitor supported sim telemetry and deliver concise spoken cues between corners.</p></article>
+ </div>
+</section>
+<section class="section" id="sim-live">
+ <div class="section-head"><div class="eyebrow">Live sim racing / race engineer</div><h2>YOUR ENGINEER.<br>IN YOUR EAR.</h2><p class="section-intro">A separate workspace for live simulator telemetry. APEXLINE will read your driving inputs, compare your pace and deliver short radio-style coaching while you drive.</p></div>
+ <div class="sim-connect-grid">
+  <article class="sim-connect-card"><span class="tag">SIMULATOR 01</span><h3>Assetto Corsa</h3><p>Live speed, throttle, brake, steering, gear and position data through the local telemetry companion.</p><div class="connection-state">Desktop app not connected</div><button class="btn ghost" style="width:100%" onclick="notify('Assetto Corsa connection needs the Windows APEXLINE companion app. It is not installed yet.')">Connect simulator</button></article>
+  <article class="sim-connect-card"><span class="tag">SIMULATOR 02</span><h3>iRacing</h3><p>Read the simulator telemetry session locally, without asking for your iRacing password.</p><div class="connection-state">Desktop app not connected</div><button class="btn ghost" style="width:100%" onclick="notify('iRacing connection needs the Windows APEXLINE companion app. It is not installed yet.')">Connect simulator</button></article>
+  <article class="sim-connect-card"><span class="tag">SIMULATOR 03</span><h3>Le Mans Ultimate</h3><p>Use the supported shared-memory or telemetry interface for live driving data.</p><div class="connection-state">Desktop app not connected</div><button class="btn ghost" style="width:100%" onclick="notify('LMU connection needs the Windows APEXLINE companion app. It is not installed yet.')">Connect simulator</button></article>
+  <article class="sim-connect-card"><span class="tag">SIMULATOR 04</span><h3>rFactor 2</h3><p>Read vehicle and session telemetry from the simulator's local data interface.</p><div class="connection-state">Desktop app not connected</div><button class="btn ghost" style="width:100%" onclick="notify('rFactor 2 connection needs the Windows APEXLINE companion app. It is not installed yet.')">Connect simulator</button></article>
+ </div>
+ <div class="engineer-console">
+  <div class="panel"><div style="display:flex;justify-content:space-between;align-items:center"><h3 style="margin:0">Live race engineer</h3><span class="tag">AWAITING TELEMETRY</span></div><div class="dash-statrow" style="margin-top:18px"><div class="stat"><span>Current lap</span><strong>—</strong></div><div class="stat"><span>Delta</span><strong>—</strong></div><div class="stat"><span>Fuel / tyres</span><strong>—</strong></div></div><div class="capability-note">Live radio is unavailable until the desktop companion is connected and an AI service is configured. No simulator account password is needed or requested here.</div></div>
+  <div class="radio-feed"><div class="eyebrow">Race engineer / radio feed</div><div class="radio-line"><b>ENGINEER · EXAMPLE</b><br>Brake a little later into the next right-hander. You lifted early on the previous lap.</div><div class="radio-line"><b>ENGINEER · EXAMPLE</b><br>You're losing time on corner exit. Prioritise a clean throttle pickup.</div><div class="radio-line"><b>ENGINEER · EXAMPLE</b><br>Incident detected — focus on recovering safely before pushing again.</div><p class="muted" style="font-size:10px;margin:12px 0 0">Illustrative radio messages only — not generated from a live session.</p></div>
+ </div>
+ <div class="capability-note">The planned engineer will cover braking points, corner-by-corner time loss, off-track events and crashes, fuel and tyre strategy, pit windows and safety reminders. It must avoid distracting you with unnecessary messages while the car is at speed.</div>
+</section>
+<section class="section">
+ <div class="section-head"><div class="eyebrow">The driver development system</div><h2>MORE THAN A LAP TIME.</h2><p class="section-intro">The goal isn't to overwhelm you with graphs. It's to turn the data into one clear thing to improve on your next run.</p></div>
+ <div class="product-grid">
+  <article class="product-card"><div class="icon">⌁</div><h3>Telemetry intelligence</h3><p>Overlay lap traces, compare sectors and inspect speed, brake, throttle and steering channels. Spot where a faster lap is made.</p><span class="tag">SIM DATA / CSV IMPORT</span></article>
+  <article class="product-card"><div class="icon">◉</div><h3>Video lap review</h3><p>Upload a real onboard lap. Break the lap into corners, mark key moments and receive a structured driving review.</p><span class="tag">VIDEO / GPS-ASSISTED</span></article>
+  <article class="product-card"><div class="icon">◖</div><h3>Voice race engineer</h3><p>Get short, actionable prompts based on live telemetry. Keep feedback useful, timely and out of the way.</p><span class="tag">WINDOWS COMPANION APP REQUIRED</span></article>
+  <article class="product-card"><div class="icon">↗</div><h3>Progress & consistency</h3><p>Track best laps, average pace, consistency and recurring weaknesses across sessions, cars and circuits.</p><span class="tag">PERSONAL DRIVER PROFILE</span></article>
+ </div>
+</section>
+<section class="section alt" id="analysis">
+ <div class="section-head"><div class="eyebrow">Real-world motorsport</div><h2>REVIEW YOUR<br>ONBOARD FOOTAGE.</h2><p class="section-intro">This separate area is for real-world onboard video and synced GPS or vehicle telemetry. Simulator sessions belong in the live sim-racing workspace above.</p></div>
+ <div class="demo">
+  <div class="panel">
+   <h3>Start a lap review</h3>
+   <label class="muted" style="font-size:10px">SESSION TYPE</label>
+   <select class="field" id="sessionType"><option>Real-world onboard video</option></select>
+   <label class="muted" style="font-size:10px">SIM / CAR</label>
+   <input class="field" id="carName" value="Senior Rotax / Assetto Corsa" placeholder="e.g. ACC · Porsche 992 GT3 R">
+   <label class="muted" style="font-size:10px">CIRCUIT</label>
+   <input class="field" id="trackName" value="Whilton Mill" placeholder="Circuit name">
+   <div class="upload">＋ Choose a lap file<input type="file" id="lapFile" accept=".csv,.ibt,.ld,.mp4,.mov,.webm,video/*"></div>
+   <button class="btn" style="width:100%;margin-top:15px" onclick="runDemo()">Analyse session ↗</button>
+   <p class="muted" style="font-size:10px;margin:12px 0 0">Demo only · file stays in your browser and is not uploaded.</p>
+  </div>
+  <div class="panel">
+   <div style="display:flex;justify-content:space-between;align-items:center"><h3 style="margin:0">Coach analysis</h3><span class="tag">SAMPLE OUTPUT</span></div>
+   <div class="chart"><svg viewBox="0 0 600 190" preserveAspectRatio="none"><g stroke="#29343d" stroke-width="1"><path d="M0 35H600M0 75H600M0 115H600M0 155H600"/></g><path d="M0 30 C50 40 65 140 120 130 S180 45 230 58 S300 145 350 120 S410 45 460 65 S540 130 600 90" stroke="#c7ff3d" stroke-width="3" fill="none"/><path d="M0 48 C50 60 65 120 120 112 S180 62 230 76 S300 125 350 105 S410 64 460 80 S540 112 600 102" stroke="#55a9ff" stroke-width="2" fill="none" stroke-dasharray="6 5"/></svg></div>
+   <div class="result" id="analysisResult"><b class="lime">SESSION REVIEW READY</b><br><br><b>1. Brake release</b><br>Review your release phase into the slowest corner. A smoother release may help the car rotate without coasting.<br><br><b>2. Minimum speed</b><br>Compare minimum speed and apex position against your best reference lap.<br><br><b>3. Exit phase</b><br>Look for earlier, progressive throttle application without sacrificing the exit line.<br><br><span class="muted">Illustrative coaching example only — not calculated from your uploaded file.</span></div>
+   <div id="emptyState" style="padding:28px 5px;color:#84909a;font-size:12px;line-height:1.7">Your review will appear here. Add a session type and file to explore the prototype workflow.</div>
+  </div>
+ </div>
+</section>
+<section class="section" id="pricing">
+ <div class="section-head"><div class="eyebrow">Simple membership</div><h2>START FREE.<br>GET FASTER.</h2><p class="section-intro">Proposed launch pricing for APEXLINE. These are concept plans; subscriptions and checkout are not connected yet.</p></div>
+ <div class="pricing">
+  <article class="price-card"><h3>GRID</h3><div class="price">£0 <small>/ forever</small></div><p>For drivers starting to understand their performance.</p><ul><li>Driver profile</li><li>Manual session log</li><li>Basic lap comparison</li><li>Sample track guides</li></ul><button class="btn ghost" style="width:100%" onclick="notify('Free access is a prototype — account creation is not connected yet.')">Start free</button></article>
+  <article class="price-card popular"><span class="tag">MOST POPULAR</span><h3 style="margin-top:18px">APEX</h3><div class="price">£9.99 <small>/ month</small></div><p>For drivers who want actionable AI feedback.</p><ul><li>Everything in Grid</li><li>AI lap analysis allowance</li><li>Telemetry comparisons</li><li>Video review allowance</li><li>Personal improvement plans</li></ul><button class="btn" style="width:100%" onclick="notify('Checkout is not live yet. Stripe needs to be connected and the service backend built.')">Join APEX</button></article>
+  <article class="price-card"><h3>ENGINEER</h3><div class="price">£19.99 <small>/ month</small></div><p>For committed sim and real-world racers.</p><ul><li>Everything in APEX</li><li>Higher analysis allowance</li><li>Live voice coach (when supported)</li><li>Advanced session history</li><li>Cross-discipline progress</li></ul><button class="btn ghost" style="width:100%" onclick="notify('Checkout is not live yet. Live coaching requires the desktop telemetry app.')">Choose Engineer</button></article>
+ </div>
+ <p class="muted" style="font-size:10px;margin-top:18px">Prices are proposed GBP launch prices, not Track Titan prices. Usage limits and AI costs must be tested before selling unlimited access.</p>
+</section>
+<section class="section alt" id="faq">
+ <div class="section-head"><div class="eyebrow">Straight answers</div><h2>BUILT ON REAL DATA.</h2></div>
+ <div class="faq">
+  <details><summary>Can I analyse a real racing video?</summary><p>The intended product will accept onboard footage and identify visible driving events. Reliable speed, brake pressure and throttle values require synced GPS or vehicle telemetry. Video alone cannot provide those measurements accurately.</p></details>
+  <details><summary>Will the AI talk to me while I race?</summary><p>That requires a Windows companion application to read supported simulator telemetry, plus a low-latency voice service. The website preview demonstrates the product direction, not a working live coach.</p></details>
+  <details><summary>Which simulators will be supported?</summary><p>Support must be added simulator by simulator using their telemetry interfaces. A sensible first target would be Assetto Corsa and Assetto Corsa Competizione, followed by iRacing and other titles.</p></details>
+  <details><summary>Can I subscribe now?</summary><p>Not yet. The pricing cards are illustrative. A secure subscription system needs a backend, Stripe account, checkout session, webhook verification and customer portal.</p></details>
+ </div>
+</section>
+<section class="cta"><div><h2>EVERY LAP HAS<br>MORE TO GIVE.</h2><p>Build better habits. Understand your data. Make your next session count.</p></div><button class="btn" onclick="showDashboard()">Explore the driver workspace ↗</button></section>
+</main>
+<section class="app-view" id="dashboard">
+ <div class="dash-top"><div><div class="eyebrow">Driver workspace / Overview</div><h2>YOUR PERFORMANCE.</h2><p class="muted" style="font-size:13px">A unified view of your sim and real-world development.</p></div><button class="btn ghost" onclick="showLanding()">← Back to site</button></div>
+ <div class="dash-grid">
+  <div class="dash-card"><div style="display:flex;justify-content:space-between;align-items:center"><h3>Performance overview</h3><span class="tag">DEMO PROFILE</span></div><div class="dash-statrow"><div class="stat"><span>Best lap</span><strong>59.42s</strong></div><div class="stat"><span>Consistency</span><strong>92%</strong></div><div class="stat"><span>Sessions</span><strong>12</strong></div></div><h3 style="margin-top:26px">Recent sessions</h3><div class="session"><div>Whilton Mill <span>· Senior Rotax</span></div><b>59.42s</b></div><div class="session"><div>Silverstone GP <span>· GT3 Sim</span></div><b>1:58.426</b></div><div class="session"><div>Brands Hatch Indy <span>· GT3 Sim</span></div><b>48.91s</b></div></div>
+  <div class="dash-card"><h3>AI coach focus</h3><p style="font-size:12px;color:#aab3bb;line-height:1.7">Your sample profile has three development priorities.</p><div class="coach-note"><b>01 / BRAKING</b><br>Build a more repeatable initial brake application.</div><div class="coach-note"><b>02 / ROTATION</b><br>Reduce coasting between brake release and throttle pickup.</div><div class="coach-note"><b>03 / CONSISTENCY</b><br>Repeat your strongest corner sequence across more laps.</div></div>
+ </div>
+ <div class="dash-card" style="margin-top:18px"><h3>Choose your next session</h3><div class="grid3"><button class="btn" onclick="showLanding();document.getElementById('analysis').scrollIntoView({behavior:'smooth'})">Upload a lap</button><button class="btn ghost" onclick="notify('Live coach requires the Windows telemetry companion app.')">Launch live coach</button><button class="btn ghost" onclick="notify('Account history will be enabled when authentication and database are connected.')">View progress</button></div></div>
+</section>
+<footer><div>© 2026 APEXLINE DRIVER INTELLIGENCE</div><div>SIM RACING / REAL MOTORSPORT / DRIVER DEVELOPMENT</div><div>Independent concept · Not affiliated with Track Titan</div></footer>
+<div class="toast" id="toast"></div>
+</div>
+<script>
+function showDashboard(){document.getElementById('landing').classList.add('hidden');document.getElementById('dashboard').classList.add('active');window.scrollTo(0,0)}
+function showLanding(){document.getElementById('dashboard').classList.remove('active');document.getElementById('landing').classList.remove('hidden');window.scrollTo(0,0)}
+function notify(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>t.classList.remove('show'),3800)}
+function runDemo(){const f=document.getElementById('lapFile').files[0];const mode=document.getElementById('sessionType').value;const car=document.getElementById('carName').value;const track=document.getElementById('trackName').value;document.getElementById('emptyState').style.display='none';const r=document.getElementById('analysisResult');r.classList.add('show');r.innerHTML='<b class="lime">DEMO REVIEW · '+mode.toUpperCase()+'</b><br><br><b>Session:</b> '+escapeHtml(track||'Unspecified circuit')+' · '+escapeHtml(car||'Unspecified car')+'<br><b>File selected:</b> '+(f?escapeHtml(f.name):'No file selected — showing example feedback')+'<br><br><b>1. Brake release</b><br>Review your release phase into the slowest corner. A smoother release may help the car rotate without coasting.<br><br><b>2. Minimum speed</b><br>Compare minimum speed and apex position against your best reference lap.<br><br><b>3. Exit phase</b><br>Look for earlier, progressive throttle application without sacrificing the exit line.<br><br><span class="muted">Illustrative coaching example only. No actual file analysis or AI inference has taken place.</span>';notify('Demo report generated — sample coaching only.')}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+</script>
+</body>
+</html>
